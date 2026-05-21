@@ -1,0 +1,11 @@
+.shell {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.content {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: calc(var(--nav-height) + 8px);
+}

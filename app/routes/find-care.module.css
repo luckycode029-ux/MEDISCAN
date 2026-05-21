@@ -1,0 +1,365 @@
+.page {
+  padding-bottom: var(--space-8);
+}
+
+.header {
+  background: var(--gradient-care);
+  padding: var(--space-10) var(--space-6) var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+
+.backBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  margin-bottom: var(--space-5);
+  cursor: pointer;
+  border: none;
+}
+
+.headerTitle {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: #FFFFFF;
+  font-family: var(--family-display);
+  margin-bottom: 6px;
+}
+
+.headerSub {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.85);
+}
+
+.searchBar {
+  position: relative;
+  margin-top: var(--space-5);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.7);
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-4) var(--space-5) var(--space-4) 44px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: var(--radius-full);
+  color: #FFFFFF;
+  font-size: var(--text-base);
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: rgba(255,255,255,0.65);
+}
+
+.body {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Specialties scroll */
+.specialtiesWrap {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.specialtiesWrap::-webkit-scrollbar {
+  display: none;
+}
+
+.specialtyChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 72px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  transition: transform 0.2s;
+}
+
+.specialtyChip:hover {
+  transform: translateY(-2px);
+}
+
+.specialtyIconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: box-shadow 0.2s;
+}
+
+.specialtyChip.active .specialtyIconWrap {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.specialtyLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.specialtyChip.active .specialtyLabel {
+  color: var(--color-primary);
+}
+
+/* Section */
+.sectionTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  font-family: var(--family-display);
+  margin-bottom: var(--space-4);
+}
+
+/* Clinic Cards */
+.clinicCard {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  display: block;
+  text-decoration: none;
+}
+
+.clinicCard:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.clinicCardTop {
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-4);
+  position: relative;
+}
+
+.clinicAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  border: 3px solid white;
+  box-shadow: var(--shadow-sm);
+}
+
+.clinicOpenBadge {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.clinicOpenBadge.open {
+  background: rgba(22,163,74,0.15);
+  color: #16A34A;
+  border: 1px solid rgba(22,163,74,0.2);
+}
+
+.clinicOpenBadge.closed {
+  background: rgba(0,0,0,0.12);
+  color: rgba(255,255,255,0.9);
+}
+
+.clinicCardBody {
+  padding: var(--space-4);
+}
+
+.clinicName {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.clinicType {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.clinicMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.ratingItem {
+  color: var(--color-warning);
+  font-weight: 700;
+}
+
+.specialtyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.specialtyTag {
+  padding: 3px 8px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+/* Doctor Cards */
+.doctorCard {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.doctorCard:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.doctorAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #FFFFFF;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.doctorInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.doctorNameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.doctorName {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.bestMatchBadge {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.doctorSpecialty {
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.doctorClinic {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.doctorMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.doctorMetaItem {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.bookDoctorBtn {
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.bookDoctorBtn:hover {
+  opacity: 0.9;
+}
