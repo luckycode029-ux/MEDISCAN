@@ -6,6 +6,7 @@ export default [
   route("api/scan-medicine", "routes/api.scan-medicine.ts"),
   route("api/analyze-report", "routes/api.analyze-report.ts"),
   route("api/check-symptoms", "routes/api.check-symptoms.ts"),
+  route("api/ai-health", "routes/api.ai-health.ts"),
   layout("components/app-shell/app-shell.tsx", [
     index("routes/home.tsx"),
     route("scan", "routes/scan.tsx"),

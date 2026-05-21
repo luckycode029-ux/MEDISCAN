@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { IconArrowLeft, IconCamera, IconUpload, IconPill } from "@tabler/icons-react";
 import type { Route } from "./+types/scan";
@@ -30,10 +30,8 @@ export default function Scan() {
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
   const [result, setResult] = useState<MedicineResult | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleUpload = async (event?: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event?.target?.files?.[0];
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     setError("");
@@ -74,18 +72,18 @@ export default function Scan() {
       <div className={styles.body}>
         {scanState === "idle" && (
           <>
-            <div className={styles.uploadZone} onClick={() => inputRef.current?.click()}>
+            <label className={styles.uploadZone}>
               <div className={styles.scanRing}>
                 <IconCamera size={32} className={styles.uploadIcon} />
               </div>
               <p className={styles.uploadTitle}>Scan Medicine Label</p>
               <p className={styles.uploadSub}>Point your camera or upload a photo of the medicine packaging</p>
-              <button className={styles.uploadBtn} onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
+              <span className={styles.uploadBtn}>
                 <IconUpload size={14} style={{ display: "inline", marginRight: 6, verticalAlign: "middle" }} />
                 Upload Photo
-              </button>
-              <input ref={inputRef} type="file" accept="image/*" className={styles.hiddenInput} onChange={handleUpload} />
-            </div>
+              </span>
+              <input type="file" accept="image/*" className={styles.hiddenInput} onChange={handleUpload} />
+            </label>
             {error && <p className={styles.scanningSubtext}>{error}</p>}
           </>
         )}

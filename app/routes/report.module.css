@@ -129,6 +129,10 @@
   opacity: 0.9;
 }
 
+.hiddenInput {
+  display: none;
+}
+
 /* Processing */
 .processingWrap {
   display: flex;

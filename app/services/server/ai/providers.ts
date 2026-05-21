@@ -1,4 +1,4 @@
-import { env } from "node:process";
+import { getEnvKey } from "../config";
 
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -18,8 +18,9 @@ function parseJsonLike(text: string): unknown {
 }
 
 async function callGemini(prompt: string) {
-  if (!env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
-  const response = await fetch(`${GEMINI_URL}?key=${env.GEMINI_API_KEY}`, {
+  const key = getEnvKey("GEMINI_API_KEY");
+  if (!key) throw new Error("Missing GEMINI_API_KEY");
+  const response = await fetch(`${GEMINI_URL}?key=${key}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -36,12 +37,13 @@ async function callGemini(prompt: string) {
 }
 
 async function callOpenRouter(prompt: string) {
-  if (!env.OPENROUTER_API_KEY) throw new Error("Missing OPENROUTER_API_KEY");
+  const key = getEnvKey("OPENROUTER_API_KEY");
+  if (!key) throw new Error("Missing OPENROUTER_API_KEY");
   const response = await fetch(OPENROUTER_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      Authorization: `Bearer ${key}`,
       "HTTP-Referer": "https://mediscan.local",
       "X-Title": "MediScan AI",
     },
@@ -60,12 +62,13 @@ async function callOpenRouter(prompt: string) {
 }
 
 async function callGroq(prompt: string) {
-  if (!env.GROQ_API_KEY) throw new Error("Missing GROQ_API_KEY");
+  const key = getEnvKey("GROQ_API_KEY");
+  if (!key) throw new Error("Missing GROQ_API_KEY");
   const response = await fetch(GROQ_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.GROQ_API_KEY}`,
+      Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({
       model: "llama-3.1-8b-instant",
