@@ -6,12 +6,14 @@ export async function extractTextFromReport(file: File) {
 
   if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
     const parser = new PDFParse({ data: bytes });
-    const parsed = await parser.getText();
-    await parser.destroy();
-
-    const text = parsed.text?.trim();
-    if (text) return text;
-    throw new Error("PDF has no readable text. Please upload a clearer scanned report image.");
+    try {
+      const parsed = await parser.getText();
+      const text = parsed.text?.trim();
+      if (text) return text;
+      throw new Error("PDF has no readable text. Please upload a clearer scanned report image.");
+    } finally {
+      await parser.destroy();
+    }
   }
 
   return extractTextFromImage(bytes);

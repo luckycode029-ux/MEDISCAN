@@ -1,6 +1,7 @@
 import type { Route } from "./+types/api.check-symptoms";
 import { analyzeSymptomsWithAI } from "~/services/server/ai/ai.service";
 import { APP_DISCLAIMER } from "~/services/server/health-disclaimer";
+import { withTimeout } from "~/services/server/safety";
 
 export async function action({ request }: Route.ActionArgs) {
   try {
@@ -9,7 +10,11 @@ export async function action({ request }: Route.ActionArgs) {
       return Response.json({ error: "Please provide symptoms." }, { status: 400 });
     }
 
-    const aiResult = await analyzeSymptomsWithAI(body.symptoms);
+    const aiResult = await withTimeout(
+      analyzeSymptomsWithAI(body.symptoms),
+      12000,
+      "AI analysis timed out. Please try again."
+    );
 
     return Response.json({
       aiProviderUsed: aiResult.provider,
@@ -22,7 +27,7 @@ export async function action({ request }: Route.ActionArgs) {
         error: (error as Error).message,
         disclaimer: APP_DISCLAIMER,
       },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }

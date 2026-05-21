@@ -3,6 +3,7 @@ import { analyzeMedicineWithAI } from "~/services/server/ai/ai.service";
 import { APP_DISCLAIMER } from "~/services/server/health-disclaimer";
 import { extractTextFromImage } from "~/services/server/ocr/ocr.service";
 import { detectMedicineName } from "~/services/server/parsers/medicine-parser";
+import { assertAllowedImageFile, withTimeout } from "~/services/server/safety";
 
 export async function action({ request }: Route.ActionArgs) {
   try {
@@ -12,10 +13,19 @@ export async function action({ request }: Route.ActionArgs) {
     if (!(file instanceof File)) {
       return Response.json({ error: "Please upload an image file." }, { status: 400 });
     }
+    assertAllowedImageFile(file);
 
-    const ocrText = await extractTextFromImage(Buffer.from(await file.arrayBuffer()));
+    const ocrText = await withTimeout(
+      extractTextFromImage(Buffer.from(await file.arrayBuffer())),
+      18000,
+      "Image processing took too long. Try a smaller or clearer image."
+    );
     const medicineName = detectMedicineName(ocrText);
-    const aiResult = await analyzeMedicineWithAI(ocrText);
+    const aiResult = await withTimeout(
+      analyzeMedicineWithAI(ocrText),
+      15000,
+      "AI analysis timed out. Please try again."
+    );
 
     return Response.json({
       extractedText: ocrText,
@@ -30,7 +40,7 @@ export async function action({ request }: Route.ActionArgs) {
         error: (error as Error).message,
         disclaimer: APP_DISCLAIMER,
       },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }
