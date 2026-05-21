@@ -9,7 +9,7 @@ export default [
   layout("components/app-shell/app-shell.tsx", [
     index("routes/home.tsx"),
     route("scan", "routes/scan.tsx"),
-    route("report", "routes/report.tsx"),
+    route("report", "routes/health-report.tsx"),
     route("symptoms", "routes/symptoms.tsx"),
     route("find-care", "routes/find-care.tsx"),
     route("book/:doctorId", "routes/book.tsx"),

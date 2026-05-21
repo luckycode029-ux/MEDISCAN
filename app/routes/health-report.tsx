@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { IconArrowLeft, IconCloudUpload, IconFileAnalytics } from "@tabler/icons-react";
-import type { Route } from "./+types/report";
+import type { Route } from "./+types/health-report";
 import styles from "./report.module.css";
 
 export function meta({}: Route.MetaArgs) {
@@ -17,7 +17,7 @@ const PROCESSING_STEPS = [
   "Generating safe health guidance...",
 ];
 
-export default function Report() {
+export default function HealthReport() {
   const [state, setState] = useState<ReportState>("idle");
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
@@ -31,7 +31,9 @@ export default function Report() {
     setState("processing");
     setStep(0);
 
-    const interval = setInterval(() => setStep((s) => Math.min(s + 1, PROCESSING_STEPS.length)), 700);
+    const interval = setInterval(() => {
+      setStep((s) => Math.min(s + 1, PROCESSING_STEPS.length));
+    }, 700);
 
     const formData = new FormData();
     formData.append("report", file);
@@ -40,7 +42,6 @@ export default function Report() {
       const response = await fetch("/api/analyze-report", { method: "POST", body: formData });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error || "Report analysis failed");
-
       setResult(data);
       setState("result");
     } catch (e) {
@@ -76,7 +77,7 @@ export default function Report() {
             </div>
             <span className={styles.uploadBtn}>Choose File</span>
             <input type="file" accept="application/pdf,image/*" className={styles.hiddenInput} onChange={handleUpload} />
-            {error && <p className={styles.processingStep}>{error}</p>}
+            {error ? <p className={styles.processingStep}>{error}</p> : null}
           </label>
         )}
 
@@ -90,18 +91,18 @@ export default function Report() {
               <div className={styles.processingProgress} />
             </div>
             <div className={styles.processingSteps}>
-              {PROCESSING_STEPS.slice(0, step).map((s) => (
-                <p key={s} className={styles.processingStep}>? {s}</p>
+              {PROCESSING_STEPS.slice(0, step).map((item) => (
+                <p key={item} className={styles.processingStep}>[ok] {item}</p>
               ))}
             </div>
           </div>
         )}
 
-        {state === "result" && result && (
+        {state === "result" && result ? (
           <>
             <h2 className={styles.sectionTitle}>Simple Summary</h2>
             <div className={styles.suggestionCard}>
-              <p className={styles.metricExplanation}>{result.analysis?.summary}</p>
+              <p className={styles.metricExplanation}>{result.analysis?.summary || "No summary available."}</p>
               <p className={styles.normalRange}>{result.disclaimer}</p>
             </div>
 
@@ -120,25 +121,29 @@ export default function Report() {
               ))}
             </div>
 
-            <h2 className={styles.sectionTitle}>Deficiencies / Abnormal Clues</h2>
+            <h2 className={styles.sectionTitle}>Deficiencies and Abnormal Clues</h2>
             <div className={styles.suggestionCard}>
               <p className={styles.conditionTitle}>Deficiencies</p>
-              {(result.analysis?.deficiencies || []).map((d: string) => <p key={d} className={styles.tipDetail}>• {d}</p>)}
+              {(result.analysis?.deficiencies || []).map((d: string) => (
+                <p key={d} className={styles.tipDetail}>- {d}</p>
+              ))}
               <p className={styles.conditionTitle}>Abnormal Values</p>
-              {(result.analysis?.abnormalValues || []).map((a: string) => <p key={a} className={styles.tipDetail}>• {a}</p>)}
+              {(result.analysis?.abnormalValues || []).map((a: string) => (
+                <p key={a} className={styles.tipDetail}>- {a}</p>
+              ))}
             </div>
 
             <h2 className={styles.sectionTitle}>Natural Improvements</h2>
             <div className={styles.suggestionCard}>
-              {(result.analysis?.naturalImprovements || []).map((n: string) => <p key={n} className={styles.tipDetail}>• {n}</p>)}
+              {(result.analysis?.naturalImprovements || []).map((n: string) => (
+                <p key={n} className={styles.tipDetail}>- {n}</p>
+              ))}
               <p className={styles.conditionSpecialist}>Consult: {result.analysis?.doctorRecommendation}</p>
             </div>
 
-            <button className={styles.uploadAnotherBtn} onClick={() => setState("idle")}>
-              Upload Another Report
-            </button>
+            <button className={styles.uploadAnotherBtn} onClick={() => setState("idle")}>Upload Another Report</button>
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );
