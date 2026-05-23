@@ -1,5 +1,6 @@
 import type { Route } from "./+types/api.ai-health";
 import { getProviderEnvStatus } from "~/services/server/config";
+import { createRequestContext, elapsedMs, logInfo } from "~/services/server/debug";
 
 async function checkUrl(url: string, init: RequestInit) {
   try {
@@ -11,7 +12,13 @@ async function checkUrl(url: string, init: RequestInit) {
 }
 
 export async function loader({}: Route.LoaderArgs) {
+  const ctx = createRequestContext("/api/ai-health", "GET");
+  logInfo("request.start", ctx);
   const envStatus = getProviderEnvStatus();
+  logInfo("env.status", {
+    ...ctx,
+    providers: envStatus.map((provider) => ({ ...provider, configured: provider.configured })),
+  });
 
   const checks = await Promise.all(
     envStatus.map(async (provider) => {
@@ -46,10 +53,12 @@ export async function loader({}: Route.LoaderArgs) {
     })
   );
 
-  return Response.json({
+  const response = {
     ok: checks.some((c) => c.reachable),
     providers: checks,
     message:
       "Provider key health check complete. At least one reachable provider is required for AI responses.",
-  });
+  };
+  logInfo("request.end", { ...ctx, elapsedMs: elapsedMs(ctx.startedAt), ok: response.ok });
+  return Response.json(response);
 }

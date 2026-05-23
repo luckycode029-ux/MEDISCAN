@@ -1,10 +1,10 @@
-import { PDFParse } from "pdf-parse";
 import { extractTextFromImage } from "./ocr/ocr.service";
 
 export async function extractTextFromReport(file: File) {
   const bytes = Buffer.from(await file.arrayBuffer());
 
   if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+    const { PDFParse } = await import("pdf-parse");
     const parser = new PDFParse({ data: bytes });
     try {
       const parsed = await parser.getText();

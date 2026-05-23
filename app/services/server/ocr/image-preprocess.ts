@@ -1,6 +1,5 @@
-import { Jimp } from "jimp";
-
 export async function preprocessImageForOcr(buffer: Buffer) {
+  const { Jimp } = await import("jimp");
   const image = await Jimp.fromBuffer(buffer);
 
   // Light preprocessing for mobile camera photos.

@@ -1,4 +1,3 @@
-import Tesseract from "tesseract.js";
 import { preprocessImageForOcr } from "./image-preprocess";
 
 export function cleanOcrText(raw: string) {
@@ -10,6 +9,7 @@ export function cleanOcrText(raw: string) {
 }
 
 export async function extractTextFromImage(buffer: Buffer) {
+  const Tesseract = (await import("tesseract.js")).default;
   const preprocessed = await preprocessImageForOcr(buffer);
   const { data } = await Tesseract.recognize(preprocessed, "eng", {
     logger: () => {
