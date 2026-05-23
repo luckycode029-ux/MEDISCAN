@@ -1,11 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "react-router",
   "functions": {
     "app/routes/api.*.ts": {
-      "maxDuration": 60,
-      "memory": 1024
-    },
-    "build/server/index.js": {
       "maxDuration": 60,
       "memory": 1024
     }

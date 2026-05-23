@@ -1,6 +1,6 @@
 import type { Route } from "./+types/api.check-symptoms";
 import { analyzeSymptomsWithAI } from "~/services/server/ai/ai.service";
-import { createRequestContext, elapsedMs, logError, logInfo } from "~/services/server/debug";
+import { createRequestContext, elapsedMs, logError, logInfo, statusForError } from "~/services/server/debug";
 import { APP_DISCLAIMER } from "~/services/server/health-disclaimer";
 import { withTimeout } from "~/services/server/safety";
 
@@ -28,13 +28,14 @@ export async function action({ request }: Route.ActionArgs) {
     });
   } catch (error) {
     logError("request.failed", { ...ctx, elapsedMs: elapsedMs(ctx.startedAt) }, error);
+    const status = statusForError(error);
     return Response.json(
       {
         error: "Symptom analysis failed. Please try again.",
         details: (error as Error).message,
         disclaimer: APP_DISCLAIMER,
       },
-      { status: 500 }
+      { status }
     );
   } finally {
     logInfo("request.end", { ...ctx, elapsedMs: elapsedMs(ctx.startedAt) });

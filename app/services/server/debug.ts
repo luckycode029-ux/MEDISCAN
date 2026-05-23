@@ -23,3 +23,21 @@ export function logError(message: string, context: Record<string, unknown>, erro
 export function elapsedMs(startedAt: number) {
   return Date.now() - startedAt;
 }
+
+export function statusForError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  const lowered = message.toLowerCase();
+  if (
+    lowered.includes("please upload") ||
+    lowered.includes("only image files") ||
+    lowered.includes("must be a pdf or image") ||
+    lowered.includes("too large") ||
+    lowered.includes("please provide symptoms")
+  ) {
+    return 400;
+  }
+  if (lowered.includes("timed out")) {
+    return 504;
+  }
+  return 500;
+}

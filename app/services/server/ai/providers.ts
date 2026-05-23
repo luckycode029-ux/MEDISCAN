@@ -6,6 +6,21 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 export type ProviderName = "gemini" | "openrouter" | "groq";
 
+async function readErrorBody(response: Response) {
+  try {
+    const text = await response.text();
+    return text.slice(0, 800);
+  } catch {
+    return "<unavailable>";
+  }
+}
+
+function requireKey(name: "GEMINI_API_KEY" | "OPENROUTER_API_KEY" | "GROQ_API_KEY") {
+  const key = getEnvKey(name);
+  if (!key) throw new Error(`Missing ${name}`);
+  return key;
+}
+
 function parseJsonLike(text: string): unknown {
   const trimmed = text.trim();
   try {
@@ -18,8 +33,7 @@ function parseJsonLike(text: string): unknown {
 }
 
 async function callGemini(prompt: string) {
-  const key = getEnvKey("GEMINI_API_KEY");
-  if (!key) throw new Error("Missing GEMINI_API_KEY");
+  const key = requireKey("GEMINI_API_KEY");
   const response = await fetch(`${GEMINI_URL}?key=${key}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,7 +43,10 @@ async function callGemini(prompt: string) {
     }),
   });
 
-  if (!response.ok) throw new Error(`Gemini failed (${response.status})`);
+  if (!response.ok) {
+    const body = await readErrorBody(response);
+    throw new Error(`Gemini failed (${response.status}): ${body}`);
+  }
   const data = (await response.json()) as any;
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error("Gemini returned empty text");
@@ -37,8 +54,7 @@ async function callGemini(prompt: string) {
 }
 
 async function callOpenRouter(prompt: string) {
-  const key = getEnvKey("OPENROUTER_API_KEY");
-  if (!key) throw new Error("Missing OPENROUTER_API_KEY");
+  const key = requireKey("OPENROUTER_API_KEY");
   const response = await fetch(OPENROUTER_URL, {
     method: "POST",
     headers: {
@@ -54,7 +70,10 @@ async function callOpenRouter(prompt: string) {
     }),
   });
 
-  if (!response.ok) throw new Error(`OpenRouter failed (${response.status})`);
+  if (!response.ok) {
+    const body = await readErrorBody(response);
+    throw new Error(`OpenRouter failed (${response.status}): ${body}`);
+  }
   const data = (await response.json()) as any;
   const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error("OpenRouter returned empty text");
@@ -62,8 +81,7 @@ async function callOpenRouter(prompt: string) {
 }
 
 async function callGroq(prompt: string) {
-  const key = getEnvKey("GROQ_API_KEY");
-  if (!key) throw new Error("Missing GROQ_API_KEY");
+  const key = requireKey("GROQ_API_KEY");
   const response = await fetch(GROQ_URL, {
     method: "POST",
     headers: {
@@ -77,7 +95,10 @@ async function callGroq(prompt: string) {
     }),
   });
 
-  if (!response.ok) throw new Error(`Groq failed (${response.status})`);
+  if (!response.ok) {
+    const body = await readErrorBody(response);
+    throw new Error(`Groq failed (${response.status}): ${body}`);
+  }
   const data = (await response.json()) as any;
   const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error("Groq returned empty text");

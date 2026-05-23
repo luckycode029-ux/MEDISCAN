@@ -1,6 +1,6 @@
 import type { Route } from "./+types/api.analyze-report";
 import { analyzeReportWithAI } from "~/services/server/ai/ai.service";
-import { createRequestContext, elapsedMs, logError, logInfo } from "~/services/server/debug";
+import { createRequestContext, elapsedMs, logError, logInfo, statusForError } from "~/services/server/debug";
 import { APP_DISCLAIMER } from "~/services/server/health-disclaimer";
 import { parseReportMetrics } from "~/services/server/parsers/report-parser";
 import { extractTextFromReport } from "~/services/server/report-text.service";
@@ -46,13 +46,14 @@ export async function action({ request }: Route.ActionArgs) {
     });
   } catch (error) {
     logError("request.failed", { ...ctx, elapsedMs: elapsedMs(ctx.startedAt) }, error);
+    const status = statusForError(error);
     return Response.json(
       {
         error: "Report analysis failed. Please retry with a smaller/clearer PDF or image.",
         details: (error as Error).message,
         disclaimer: APP_DISCLAIMER,
       },
-      { status: 500 }
+      { status }
     );
   } finally {
     logInfo("request.end", { ...ctx, elapsedMs: elapsedMs(ctx.startedAt) });
